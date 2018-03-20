@@ -21,19 +21,23 @@ class User extends Authenticatable
     use HasRoles;
 
     protected $fillable = ['name', 'email', 'password', 'remember_token'];
-    
+    protected $guard_name = 'web';
     
     /**
      * Hash password
      * @param $input
      */
-    public function setPasswordAttribute($input)
+    // public function setPasswordAttribute($input)
+    // {
+    //     if ($input)
+    //         $this->attributes['password'] = app('hash')->needsRehash($input) ? Hash::make($input) : $input;
+    // }
+    public function setPasswordAttribute($password)
     {
-        if ($input)
-            $this->attributes['password'] = app('hash')->needsRehash($input) ? Hash::make($input) : $input;
+        $this->attributes['password'] = bcrypt($password);
     }
-    
-    
+
+
     public function role()
     {
         return $this->belongsToMany(Role::class, 'role_user');
